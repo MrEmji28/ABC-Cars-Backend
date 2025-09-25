@@ -7,9 +7,35 @@ use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Car::with('user')->get();
+        $query = Car::with('user');
+
+        if ($request->has('brand')) {
+            $query->where('brand', 'like', '%' . $request->brand . '%');
+        }
+
+        if ($request->has('model')) {
+            $query->where('model', 'like', '%' . $request->model . '%');
+        }
+
+        if ($request->has('year')) {
+            $query->where('year', $request->year);
+        }
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        return $query->get();
     }
 
     public function store(Request $request)
